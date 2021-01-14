@@ -1,3 +1,5 @@
+package sort;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,8 +11,7 @@ import java.util.concurrent.*;
 
 public class QuickSortTest extends Assert {
 
-    private final int MAX_ARR_SIZE = 1000000;
-    private final int AVAILABLE_THREAD = 4;
+    private final int MAX_ARR_SIZE = 100000;
 
     @Test
     public void testQuickSort() {
@@ -26,7 +27,7 @@ public class QuickSortTest extends Assert {
         long start = System.nanoTime();
         QuickSort.quickSort(list, 0, list.size() - 1);
         long end = System.nanoTime();
-        System.out.println("\n Just QuickSort " + (end - start));
+        System.out.println("\n Just sort.QuickSort " + (end - start));
         assertEquals(list, listResult);
     }
 
@@ -52,7 +53,7 @@ public class QuickSortTest extends Assert {
         long start = System.nanoTime();
         ParallelQuickSort parallelQuickSort =
                 new ParallelQuickSort(list, 0, list.size() - 1,
-                        executor, threadList, AVAILABLE_THREAD);
+                        executor, threadList, 2);
         threadList.add(executor.submit(parallelQuickSort));
         while (!threadList.isEmpty()) {
    //блокируем потоки и ждем завершения задачи
