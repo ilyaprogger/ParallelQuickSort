@@ -11,7 +11,7 @@ import java.util.concurrent.*;
 
 public class QuickSortTest extends Assert {
 
-    private final int MAX_ARR_SIZE = 100000;
+    private final int MAX_ARR_SIZE = 1000000;
 
     @Test
     public void testQuickSort() {
