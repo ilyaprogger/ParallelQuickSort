@@ -5,6 +5,7 @@ import org.openjdk.jmh.annotations.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Fork(value = 1)
 @Warmup(iterations = 5, time = 1)
@@ -50,11 +51,11 @@ public class BenchMarks {
         }
         CopyOnWriteArrayList<Future> threadList = new CopyOnWriteArrayList<>();
         ExecutorService executor = Executors.newWorkStealingPool();
-
-
+        AtomicInteger count = new AtomicInteger();
+        count.set(0);
         ParallelQuickSort parallelQuickSort =
                 new ParallelQuickSort(list, 0, list.size() - 1,
-                        executor, threadList, threadsNum);
+                        executor, threadList, threadsNum,0);
         threadList.add(executor.submit(parallelQuickSort));
         while (!threadList.isEmpty()) {
             //блокируем потоки и ждем завершения задачи

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class QuickSortTest extends Assert {
@@ -49,11 +50,11 @@ public class QuickSortTest extends Assert {
     public void runParallelTest(List<Integer> list) throws ExecutionException, InterruptedException {
         CopyOnWriteArrayList<Future> threadList = new CopyOnWriteArrayList<>();
         ExecutorService executor = Executors.newWorkStealingPool();
-
+        int cores = Runtime.getRuntime().availableProcessors();
         long start = System.nanoTime();
         ParallelQuickSort parallelQuickSort =
                 new ParallelQuickSort(list, 0, list.size() - 1,
-                        executor, threadList, 8);
+                        executor, threadList, cores,0);
         threadList.add(executor.submit(parallelQuickSort));
         while (!threadList.isEmpty()) {
    //блокируем потоки и ждем завершения задачи

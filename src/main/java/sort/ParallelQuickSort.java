@@ -12,18 +12,19 @@ public class ParallelQuickSort extends Thread {
     private final ExecutorService executor;
     private final CopyOnWriteArrayList<Future> threadList;
     private final int availableThreads;
-
-    private volatile static int countThread = 0;
+    private int countThread;
 
     public ParallelQuickSort(List<Integer> list, int left, int right,
                              ExecutorService executor,
-                             CopyOnWriteArrayList<Future> threadList, int availableThreads) {
+                             CopyOnWriteArrayList<Future> threadList,
+                             int availableThreads, int countThread) {
         this.list = list;
         this.left = left;
         this.right = right;
         this.executor = executor;
         this.threadList = threadList;
         this.availableThreads = availableThreads;
+        this.countThread = countThread;
     }
 
     private void quickSort(List<Integer> list, int left, int right) {
@@ -65,25 +66,35 @@ public class ParallelQuickSort extends Thread {
         return pivot;
     }
 
+    public synchronized boolean compare() {
+        return countThread < availableThreads;
+    }
+
+    public synchronized void increment() {
+        countThread++;
+    }
+
     private void parallelQuickSort(List<Integer> list, int left, int right) {
 
         int pivot = partition(list, left, right);
 
         if (pivot > left) {
-            if (countThread < availableThreads) {
-                countThread++;
+            if (compare()) {
+                increment();
                 threadList.add(executor.submit(
-                        new ParallelQuickSort(list, left, pivot, executor, threadList,availableThreads)));
+                        new ParallelQuickSort(list, left, pivot, executor,
+                                threadList, availableThreads, countThread)));
             } else {
                 quickSort(list, left, pivot);
             }
         }
 
         if (right >= pivot) {
-            if (countThread < availableThreads) {
-                countThread++;
+            if (compare()) {
+                increment();
                 threadList.add(executor.submit(
-                        new ParallelQuickSort(list, pivot + 1, right, executor, threadList,availableThreads)));
+                        new ParallelQuickSort(list, pivot + 1, right, executor,
+                                threadList, availableThreads, countThread)));
             } else {
                 quickSort(list, pivot + 1, right);
             }
