@@ -5,27 +5,24 @@ import java.util.List;
 public class QuickSort {
 
     public static void quickSort(List<Integer> list, int left, int right) {
-        int pivot, low, high;
-        int temp;
         if (left >= right)
             return;
-        pivot = list.get(left);
-        low = left;
-        high = right;
-
+        int pivot = list.get(left), low = left, high = right;
         while (low < high) {
-            while (list.get(low) <= pivot && low < right)
-                low++;
-            while (list.get(high) > pivot)
+            while (low < high && list.get(high) >= pivot)
                 high--;
             if (low < high) {
-                temp = list.get(low);
                 list.set(low, list.get(high));
-                list.set(high, temp);
+                low++;
+                while (list.get(low) < pivot && low < high)
+                    low++;
+                if (low < high) {
+                    list.set(high, list.get(low));
+                    high--;
+                }
             }
         }
-        list.set(left, list.get(high));
-        list.set(high, pivot);
+        list.set(low, pivot);
 
         if (pivot > left)
             quickSort(list, left, pivot - 1);
