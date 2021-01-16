@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.concurrent.*;
 
 @Fork(value = 1)
-@Warmup(iterations = 5,time = 1)
-@Measurement(iterations = 5,time = 1)
+@Warmup(iterations = 5, time = 1)
+@Measurement(iterations = 5, time = 1)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @BenchmarkMode(Mode.AverageTime)
 public class BenchMarks {
@@ -21,18 +21,22 @@ public class BenchMarks {
     public void oneThread() throws ExecutionException, InterruptedException {
         parallelQuickSort(1);
     }
+
     @Benchmark
     public void twoThread() throws ExecutionException, InterruptedException {
         parallelQuickSort(2);
     }
+
     @Benchmark
     public void threeThread() throws ExecutionException, InterruptedException {
         parallelQuickSort(3);
     }
+
     @Benchmark
     public void fourThread() throws ExecutionException, InterruptedException {
         parallelQuickSort(4);
     }
+
     @Benchmark
     public void twentyThread() throws ExecutionException, InterruptedException {
         parallelQuickSort(20);

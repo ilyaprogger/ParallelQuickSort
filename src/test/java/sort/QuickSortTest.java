@@ -53,7 +53,7 @@ public class QuickSortTest extends Assert {
         long start = System.nanoTime();
         ParallelQuickSort parallelQuickSort =
                 new ParallelQuickSort(list, 0, list.size() - 1,
-                        executor, threadList, 2);
+                        executor, threadList, 8);
         threadList.add(executor.submit(parallelQuickSort));
         while (!threadList.isEmpty()) {
    //блокируем потоки и ждем завершения задачи

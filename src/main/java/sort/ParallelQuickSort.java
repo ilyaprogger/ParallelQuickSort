@@ -13,10 +13,11 @@ public class ParallelQuickSort extends Thread {
     private final CopyOnWriteArrayList<Future> threadList;
     private final int availableThreads;
 
-    private static int countThread = 0;
+    private volatile static int countThread = 0;
 
     public ParallelQuickSort(List<Integer> list, int left, int right,
-                             ExecutorService executor, CopyOnWriteArrayList<Future> threadList, int availableThreads) {
+                             ExecutorService executor,
+                             CopyOnWriteArrayList<Future> threadList, int availableThreads) {
         this.list = list;
         this.left = left;
         this.right = right;
