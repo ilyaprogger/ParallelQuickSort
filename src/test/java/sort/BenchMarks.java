@@ -51,11 +51,10 @@ public class BenchMarks {
         }
         CopyOnWriteArrayList<Future> threadList = new CopyOnWriteArrayList<>();
         ExecutorService executor = Executors.newWorkStealingPool();
-        AtomicInteger count = new AtomicInteger();
-        count.set(0);
+        int cores = Runtime.getRuntime().availableProcessors();
         ParallelQuickSort parallelQuickSort =
                 new ParallelQuickSort(list, 0, list.size() - 1,
-                        executor, threadList, threadsNum,0);
+                        executor, threadList, cores);
         threadList.add(executor.submit(parallelQuickSort));
         while (!threadList.isEmpty()) {
             //блокируем потоки и ждем завершения задачи

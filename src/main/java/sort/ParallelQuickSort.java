@@ -13,25 +13,24 @@ public class ParallelQuickSort extends Thread {
     private final CopyOnWriteArrayList<Future> threadList;
     private final int availableThreads;
 
-    private volatile int countThread;
+    private static volatile int countThread = 0;
 
     public ParallelQuickSort(List<Integer> list, int left, int right,
                              ExecutorService executor, CopyOnWriteArrayList<Future> threadList,
-                             int availableThreads, int countThread) {
+                             int availableThreads) {
         this.list = list;
         this.left = left;
         this.right = right;
         this.executor = executor;
         this.threadList = threadList;
         this.availableThreads = availableThreads;
-        this.countThread = countThread;
     }
 
     private void quickSort(List<Integer> list, int left, int right) {
         if (left < right) {
-            int pivot = partition(list, left, right);
-            quickSort(list, left, pivot);
-            quickSort(list, pivot + 1, right);
+            int[] pivot = partition(list, left, right);
+            quickSort(list, left, pivot[1]);
+            quickSort(list, pivot[0], right);
         }
     }
 
@@ -40,63 +39,69 @@ public class ParallelQuickSort extends Thread {
         parallelQuickSort(list, left, right);
     }
 
-    private int partition(List<Integer> list, int left, int right) {
+    private int[] partition(List<Integer> list, int left, int right) {
         if (left >= right)
-            return -1;
-        int pivot = list.get(left), low = left, high = right;
-        while (low < high) {
-            while (low < high && list.get(high) >= pivot)
-                high--;
-            if (low < high) {
-                list.set(low, list.get(high));
+            return new int[]{-1};
+
+        int pivot = list.get(left + (right - left) / 2);
+
+        int low = left, high = right;
+        while (low <= high) {
+            while (list.get(low) < pivot) {
                 low++;
-                while (list.get(low) < pivot && low < high)
-                    low++;
-                if (low < high) {
-                    list.set(high, list.get(low));
-                    high--;
-                }
+            }
+
+            while (list.get(high) > pivot) {
+                high--;
+            }
+
+            if (low <= high) {
+                int temp = list.get(low);
+                list.set(low, list.get(high));
+                list.set(high, temp);
+                low++;
+                high--;
             }
         }
-        list.set(low, pivot);
-        return low;
+        return new int[]{low, high};
     }
 
     public synchronized boolean compare() {
-        return countThread < availableThreads;
+        if (countThread < availableThreads) {
+            countThread++;
+            return true;
+        } else
+            return false;
     }
 
-    public synchronized void increment() {
-        countThread++;
-    }
-
-    private static final Object object = new Object();
 
     private void parallelQuickSort(List<Integer> list, int left, int right) {
 
-        int pivot = partition(list, left, right);
-        synchronized (object) {
-            if (pivot > left) {
-                if (compare()) {
-                    increment();
-                    threadList.add(executor.submit(
-                            new ParallelQuickSort(list, left, pivot, executor,
-                                    threadList, availableThreads, countThread)));
-                } else {
-                    quickSort(list, left, pivot);
-                }
-            }
+        int[] pivot = partition(list, left, right);
+
+        if (pivot[0] == -1) {
+            return;
         }
-        synchronized (object) {
-            if (right >= pivot) {
-                if (compare()) {
-                    increment();
-                    threadList.add(executor.submit(
-                            new ParallelQuickSort(list, pivot + 1, right, executor,
-                                    threadList, availableThreads, countThread)));
-                } else {
-                    quickSort(list, pivot + 1, right);
-                }
+
+        if (pivot[1] > left) {
+            if (compare()) {
+// System.out.println(Thread.currentThread());
+                threadList.add(executor.submit(
+                        new ParallelQuickSort(list, left, pivot[1], executor,
+                                threadList, availableThreads)));
+            } else {
+                quickSort(list, left, pivot[1]);
+            }
+
+        }
+        if (right > pivot[0]) {
+            if (compare()) {
+// System.out.println(Thread.currentThread());
+                threadList.add(executor.submit(
+                        new ParallelQuickSort(list, pivot[0], right, executor,
+                                threadList, availableThreads)));
+            } else {
+                quickSort(list, pivot[0], right);
             }
         }
     }
