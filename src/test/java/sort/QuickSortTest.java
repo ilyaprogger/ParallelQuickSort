@@ -10,7 +10,7 @@ import static sort.QuickSort.quickSort;
 
 public class QuickSortTest extends Assert {
 
-    private final int MAX_ARR_SIZE = 2000000;
+    private final int MAX_ARR_SIZE = 5000000;
 
     @Test
     public void testQuickSort() {
@@ -42,7 +42,7 @@ public class QuickSortTest extends Assert {
         long start = System.nanoTime();
         testWorkStealingPool(list);
         long end = System.nanoTime();
-        System.out.println("\n Just QuickSort " + (end - start));
+        System.out.println("\n ParallelQuickSort " + (end - start));
         assertEquals(list, listResult);
     }
 
@@ -55,17 +55,17 @@ public class QuickSortTest extends Assert {
             list.add(MAX_ARR_SIZE - i - 1);
             listResult.add(MAX_ARR_SIZE - i - 1);
         }
-        for (int i = 0; i < 10; i++) {
-            long start = System.nanoTime();
-            testFixedThreadPool(list);
-            long end = System.nanoTime();
-            System.out.println("\ntestFixedThreadPool " + (end - start));
-            long start2 = System.nanoTime();
-            testWorkStealingPool(listResult);
-            long end2 = System.nanoTime();
-            System.out.println("\ntestWorkStealingPool " + (end2 - start2));
-        }
-        assertEquals(list, listResult);
+  //  for (int i = 0; i < 10; i++) {
+  //      long start = System.nanoTime();
+  //      testFixedThreadPool(list);
+  //      long end = System.nanoTime();
+  //      System.out.println("\ntestFixedThreadPool " + (end - start));
+  //      long start2 = System.nanoTime();
+  //      testWorkStealingPool(listResult);
+  //      long end2 = System.nanoTime();
+  //      System.out.println("\ntestWorkStealingPool " + (end2 - start2));
+  //  }
+    //    assertEquals(list, listResult);
 
     }
 
