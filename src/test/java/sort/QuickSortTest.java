@@ -1,4 +1,5 @@
 package sort;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -55,17 +56,17 @@ public class QuickSortTest extends Assert {
             list.add(MAX_ARR_SIZE - i - 1);
             listResult.add(MAX_ARR_SIZE - i - 1);
         }
-  //  for (int i = 0; i < 10; i++) {
-  //      long start = System.nanoTime();
-  //      testFixedThreadPool(list);
-  //      long end = System.nanoTime();
-  //      System.out.println("\ntestFixedThreadPool " + (end - start));
-  //      long start2 = System.nanoTime();
-  //      testWorkStealingPool(listResult);
-  //      long end2 = System.nanoTime();
-  //      System.out.println("\ntestWorkStealingPool " + (end2 - start2));
-  //  }
-    //    assertEquals(list, listResult);
+        for (int i = 0; i < 10; i++) {
+            long start = System.nanoTime();
+            testFixedThreadPool(list);
+            long end = System.nanoTime();
+            System.out.println("\ntestFixedThreadPool " + (end - start));
+            long start2 = System.nanoTime();
+            testWorkStealingPool(listResult);
+            long end2 = System.nanoTime();
+            System.out.println("\ntestWorkStealingPool " + (end2 - start2));
+        }
+        assertEquals(list, listResult);
 
     }
 
