@@ -66,14 +66,18 @@ public class ParallelQuickSort extends Thread {
         return new int[]{low, high};
     }
 
-    public synchronized boolean compare() {
-        if (countThread < availableThreads) {
-            countThread++;
-            return true;
-        } else
-            return false;
-    }
+    private static final Object object = new Object();
 
+    public boolean compare() {
+        synchronized (object) {
+            if (countThread < availableThreads) {
+                countThread++;
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
 
     private void parallelQuickSort(List<Integer> list, int left, int right) {
 
@@ -85,7 +89,6 @@ public class ParallelQuickSort extends Thread {
 
         if (pivot[1] > left) {
             if (compare()) {
-// System.out.println(Thread.currentThread());
                 threadList.add(executor.submit(
                         new ParallelQuickSort(list, left, pivot[1], executor,
                                 threadList, availableThreads)));
@@ -96,7 +99,6 @@ public class ParallelQuickSort extends Thread {
         }
         if (right > pivot[0]) {
             if (compare()) {
-// System.out.println(Thread.currentThread());
                 threadList.add(executor.submit(
                         new ParallelQuickSort(list, pivot[0], right, executor,
                                 threadList, availableThreads)));

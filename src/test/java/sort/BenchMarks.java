@@ -8,8 +8,8 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Fork(value = 1)
-@Warmup(iterations = 5, time = 1)
-@Measurement(iterations = 5, time = 1)
+@Warmup(iterations = 10, time = 1)
+@Measurement(iterations = 10, time = 1)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @BenchmarkMode(Mode.AverageTime)
 public class BenchMarks {
@@ -39,13 +39,18 @@ public class BenchMarks {
     }
 
     @Benchmark
+    public void eightThread() throws ExecutionException, InterruptedException {
+        parallelQuickSort(8);
+    }
+
+    @Benchmark
     public void twentyThread() throws ExecutionException, InterruptedException {
         parallelQuickSort(20);
     }
 
     private void parallelQuickSort(int threadsNum) throws ExecutionException, InterruptedException {
         List<Integer> list = new ArrayList<>();
-        int ARRAY_SIZE = 10000;
+        int ARRAY_SIZE = 10000000;
         for (int i = 0; i < ARRAY_SIZE; i++) {
             list.add(ARRAY_SIZE - i - 1);
         }
@@ -54,7 +59,7 @@ public class BenchMarks {
         int cores = Runtime.getRuntime().availableProcessors();
         ParallelQuickSort parallelQuickSort =
                 new ParallelQuickSort(list, 0, list.size() - 1,
-                        executor, threadList, cores);
+                        executor, threadList, threadsNum);
         threadList.add(executor.submit(parallelQuickSort));
         while (!threadList.isEmpty()) {
             //блокируем потоки и ждем завершения задачи
